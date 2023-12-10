@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>珠珠的刮刮乐</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+        .scratch-container {
+            position: relative;
+            width: 300px;
+            height: 150px;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        #scratchCanvas {
+            z-index: 2;
+        }
+        #backgroundCanvas {
+            z-index: 1;
+        }
+        .header {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-family: 'Brush Script MT', cursive;
+            color: purple;
+        }
+        .footer {
+            font-size: 18px;
+            margin-top: 20px;
+            width: 300px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<div class="header">珠珠的刮刮乐</div>
+<div class="scratch-container">
+    <canvas id="backgroundCanvas"></canvas>
+    <canvas id="scratchCanvas"></canvas>
+</div>
+<div class="footer">萝卜公司</div>
+<script>
+    const scratchCanvas = document.getElementById('scratchCanvas');
+    const scratchCtx = scratchCanvas.getContext('2d');
+    const backgroundCanvas = document.getElementById('backgroundCanvas');
+    const backgroundCtx = backgroundCanvas.getContext('2d');
+
+    const canvasWidth = 300;
+    const canvasHeight = 150;
+
+    scratchCanvas.width = canvasWidth;
+    scratchCanvas.height = canvasHeight;
+    backgroundCanvas.width = canvasWidth;
+    backgroundCanvas.height = canvasHeight;
+
+    let isScratching = false;
+
+    // Load and draw the background image
+    let backgroundImage = new Image();
+    backgroundImage.onload = function() {
+        backgroundCtx.drawImage(backgroundImage, 0, 0, canvasWidth, canvasHeight);
+    };
+    backgroundImage.src = 'img/1.jpg'; // Ensure this path is correct
+
+    // Fill the scratch canvas with a light purple color
+    scratchCtx.fillStyle = '#C8A2C8';
+    scratchCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+    // Event listeners for mouse and touch events
+    scratchCanvas.addEventListener('mousedown', startScratch);
+    scratchCanvas.addEventListener('mousemove', scratch);
+    scratchCanvas.addEventListener('mouseup', stopScratch);
+    scratchCanvas.addEventListener('mouseleave', stopScratch);
+    scratchCanvas.addEventListener('touchstart', startScratch);
+    scratchCanvas.addEventListener('touchmove', scratch);
+    scratchCanvas.addEventListener('touchend', stopScratch);
+
+    function startScratch(e) {
+        isScratching = true;
+        scratch(e);
+    }
+
+    function scratch(e) {
+        if (!isScratching) return;
+        var x = e.clientX || e.touches[0].clientX;
+        var y = e.clientY || e.touches[0].clientY;
+        x -= scratchCanvas.getBoundingClientRect().left;
+        y -= scratchCanvas.getBoundingClientRect().top;
+        scratchCtx.globalCompositeOperation = 'destination-out';
+        scratchCtx.beginPath();
+        scratchCtx.arc(x, y, 30, 0, Math.PI * 2);
+        scratchCtx.fill();
+    }
+
+    function stopScratch() {
+        isScratching = false;
+    }
+</script>
+</body>
+</html>
